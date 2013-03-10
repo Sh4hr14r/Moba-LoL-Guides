@@ -57,4 +57,6 @@ class Champion:
 	def item_set(self,items={}):
 		"""Mettod for defining a champions recommended item set."""
 		self.Item_Set=items
-	def 
+	def champ_description(self,description):
+		"""Method for setting a champion's description."""
+		self.Description=description
