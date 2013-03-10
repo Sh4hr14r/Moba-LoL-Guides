@@ -32,42 +32,26 @@ def name_dic_creator(soup,tag,attrib,pattern):
 def link_tag_dic(soup,addr):
 	"""Function for creating an empty dictionary containing the input soup's wanted names as keys."""
 	dic={}
-	tdtags=[]
-	atags=[]
-	tempatags=[]
-	spantags=[]
-	atags1 = [td.find('a') for td in soup.find_all('td',{'class':'bg1-b'})]
-	atags2 = [td.find('a') for td in soup.find_all('td',{'class':'bg2-b'})]
-	atags1=set(atags1)
-	atags1=list(atags1)
-	atags1.remove(None)
-	atags2=set(atags2)
-	atags2=list(atags2)
-	atags2.remove(None)
+	tags=[]
+	temptags=[]
+	#Retrieving the desired information from the site 
+	tags1 = [(td.find('a'),td.find('span')) for td in soup.find_all('td',{'class':'bg1-b'})]
+	tags2 = [(td.find('a'),td.find('span')) for td in soup.find_all('td',{'class':'bg2-b'})]
+	#Creating a temperory list containing the tags in order of appearance
 	for j in range(2*len(atags1)):
 		if j%2==0:
-			tempatags.append(atags2[j/2])
+			temptags.append(tags2[j/2])
 		else:
-			tempatags.append(atags1[j/2])
-	spantags1 = [td.find('span') for td in soup.find_all('td',{'class':'bg1-b'})]
-	spantags2 = [td.find('span') for td in soup.find_all('td',{'class':'bg2-b'})]
-	spantags1=set(spantags1)
-	spantags1=list(spantags1)
-	spantags1.remove(None)
-	spantags2=set(spantags2)
-	spantags2=list(spantags2)
-	spantags2.remove(None)
-	for j in range(2*len(spantags1)):
-		if j%2==0:
-			spantags.append(spantags2[j/2])
-		else:
-			spantags.append(spantags1[j/2])
-	for link in tempatags:
-		if link.string!=None:
-			atags.append(link)
-	sorted_atags=sorted(atags,key=lambda x:atags[atags.index(x)].string)
-	for i in range(len(sorted_atags)):
-		dic[sorted_atags[i].string]=[sorted_atags[i].get('href'),spantags[i].string]
+			temptags.append(tags1[j/2])
+	#Ommiting the tuples containing None Type elements from the list
+	for link in temptags:
+		if link[0]!=None and link[1]!=None:
+			tags.append(link)
+	#Sorting the tags list by using the name of the abilities for the future if the need rises
+	sorted_tags=sorted(tags,key=lambda x:tags[tags.index(x)][0].string)
+	#Creating the desired dictionary containing ability names and their links and descriptions.
+	for i in range(len(sorted_tags)):
+		dic[sorted_tags[i][0].string]=[sorted_tags[i][0].get('href'),sorted_tags[i][1].string]
 	return dic
 
 
