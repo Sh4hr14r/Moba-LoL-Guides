@@ -47,16 +47,24 @@ class Champion:
 	def role(self,roles=[]):
 		"""Method for setting a champion's role in the game."""
 		self.Roles=roles
+		
+	def abilities(self,Abilities={}):
+		"""Method for setting a champion's spells by using a dictionary containing Spell objects of the champion"""
+		self.Abilities=spells
+		
 	def spells(self,spells={}):
 		"""Method for setting a champion's spells by using a dictionary containing Spell objects of the champion"""
 		self.Spells=spells
+
 	def price(self,rp,ip):
 		"""Method for setting a champion's Riot Point and Influence Point prices."""
 		self.RP_Price=rp
 		self.IP_Price=ip
+
 	def item_set(self,items={}):
 		"""Mettod for defining a champions recommended item set."""
 		self.Item_Set=items
+
 	def champ_description(self,description):
 		"""Method for setting a champion's description."""
 		self.Description=description

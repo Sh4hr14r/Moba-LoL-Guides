@@ -1,7 +1,7 @@
 import urllib2
 from bs4 import BeautifulSoup
 import re
-
+from Spell import Spell
 #champ_url='http://www.mobafire.com/league-of-legends/champions'
 #champ_resp=urllib2.urlopen(champ_url)
 #champions=champ_resp.read()
@@ -57,10 +57,17 @@ def link_tag_dic(soup):
 	return dic
 
 
+def Spells_class_dic(dic):
+	"""Function for setting the values of spells in a spell object attributes and putting them into that dictionary."""
+	for a in dic.keys():
+		exec(a+"=Spell(a)")
+		exec("print "+a+".Name")
+		 
 #########################################################Creating The Names Dictionaries####################################################
 Items=name_dic_creator(itsoup,'div','class','champ-name')
 Champions=name_dic_creator(chsoup,'div','class','champ-name')
 Abilities=link_tag_dic(absoup)
 Spells=link_tag_dic(spsoup)
 #########################################################Driver#############################################################################
-print Spells
+Spells_class_dic(Spells)
+
