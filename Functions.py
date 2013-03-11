@@ -1,7 +1,6 @@
 import urllib2
 from bs4 import BeautifulSoup
 import re
-import copy
 
 #champ_url='http://www.mobafire.com/league-of-legends/champions'
 #champ_resp=urllib2.urlopen(champ_url)
@@ -13,10 +12,13 @@ item_resp=open("/home/shahriar/Desktop/Mobafire/Items.html",'r')
 items=item_resp.read()
 ability_resp=open("/home/shahriar/Desktop/Mobafire/Abilities.html",'r')
 abilities=ability_resp.read()
+spell_resp=open("/home/shahriar/Desktop/Mobafire/Spells.html",'r')
+spells=spell_resp.read()
 ##################################################Making BS4 Objects########################################################################
 chsoup=BeautifulSoup(champions)
 itsoup=BeautifulSoup(items)
 absoup=BeautifulSoup(abilities)
+spsoup=BeautifulSoup(spells)
 ##################################################Function Declarations#####################################################################
 def name_dic_creator(soup,tag,attrib,pattern):
 	"""Function for creating an empty dictionary containing the input soup's wanted names as keys."""	
@@ -29,7 +31,7 @@ def name_dic_creator(soup,tag,attrib,pattern):
 	return dic
 	
 	
-def link_tag_dic(soup,addr):
+def link_tag_dic(soup):
 	"""Function for creating an empty dictionary containing the input soup's wanted names as keys."""
 	dic={}
 	tags=[]
@@ -38,7 +40,7 @@ def link_tag_dic(soup,addr):
 	tags1 = [(td.find('a'),td.find('span')) for td in soup.find_all('td',{'class':'bg1-b'})]
 	tags2 = [(td.find('a'),td.find('span')) for td in soup.find_all('td',{'class':'bg2-b'})]
 	#Creating a temperory list containing the tags in order of appearance
-	for j in range(2*len(atags1)):
+	for j in range(2*len(tags1)):
 		if j%2==0:
 			temptags.append(tags2[j/2])
 		else:
@@ -58,7 +60,7 @@ def link_tag_dic(soup,addr):
 #########################################################Creating The Names Dictionaries####################################################
 Items=name_dic_creator(itsoup,'div','class','champ-name')
 Champions=name_dic_creator(chsoup,'div','class','champ-name')
-Abilities=link_tag_dic(absoup,'^http://www.mobafire.com/league-of-legends/ability/')
+Abilities=link_tag_dic(absoup)
+Spells=link_tag_dic(spsoup)
 #########################################################Driver#############################################################################
-print Abilities
-
+print Spells
