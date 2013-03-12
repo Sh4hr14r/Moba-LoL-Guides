@@ -2,6 +2,7 @@ import urllib2
 from bs4 import BeautifulSoup
 import re
 from Spell import Spell
+from Ability import Ability
 #champ_url='http://www.mobafire.com/league-of-legends/champions'
 #champ_resp=urllib2.urlopen(champ_url)
 #champions=champ_resp.read()
@@ -57,17 +58,47 @@ def link_tag_dic(soup):
 	return dic
 
 
-def Spells_class_dic(dic):
+def spells_class_dic(dic):
 	"""Function for setting the values of spells in a spell object attributes and putting them into that dictionary."""
 	for a in dic.keys():
 		exec(a+"=Spell(a)")
-		exec("print "+a+".Name")
-		 
+		exec(a+".Description = dic[a][1]")
+		exec("dic[a].append("+a+")")
+	return dic
+
+def abilities_class_dic(dic):
+	"""Function for setting the values of abilities in a ability object attributes and putting them into that dictionary."""
+	for a in dic.keys():
+		temp=a.strip()
+		temp=temp.replace(':','')
+		temp=temp.replace("'",'_')
+		temp=temp.replace("-",'_')
+		temp=temp.replace(' ','_')
+		temp=temp.replace("/","OR")
+		temp=temp.replace(",","_")
+		temp=temp.replace("90","Ninety")
+		temp=temp.replace("!","")
+		exec(temp+" = Ability(a)")
+		exec(temp+".Description = dic[a][1]")
+		exec("dic[a].append("+temp+")")
+	return dic
+	
+	
+def sp_or_ab_final(dic):
+	"""Generating the final Spells or Abilities dictionary for using in the desired database."""
+	for a in dic.keys():
+		dic[a]=dic[a][2].__dict__
+	return dic
+
+
+def item_object_creator(dic):
+	
 #########################################################Creating The Names Dictionaries####################################################
 Items=name_dic_creator(itsoup,'div','class','champ-name')
 Champions=name_dic_creator(chsoup,'div','class','champ-name')
 Abilities=link_tag_dic(absoup)
 Spells=link_tag_dic(spsoup)
+#########################################################Completed Dictionaries#############################################################
+Spells=sp_or_ab_final(spells_class_dic(Spells))
+Abilities=sp_or_ab_final(abilities_class_dic(Abilities))
 #########################################################Driver#############################################################################
-Spells_class_dic(Spells)
-
