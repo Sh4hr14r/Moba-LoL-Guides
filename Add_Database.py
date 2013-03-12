@@ -13,9 +13,9 @@ def Add_Spells(dic):
 def Add_Item(dic):
 	db.League_Of_Legend.Item.insert(dic)
 def Add_champions(dic):
-	db.League_Of_Legend.Champions(dic)
+	db.League_Of_Legend.Champions.insert(dic)
 def Add_Abilities(dic):	
-	db.League_Of_Legend.Abilities(dic)
+	db.League_Of_Legend.Abilities.insert(dic)
 def Add_Runes(dic):
-	db.League_Of_Legend.Runes(dic)
+	db.League_Of_Legend.Runes.insert(dic)
 	
