@@ -1,21 +1,16 @@
+# -*- coding: utf-8 -*-
 import pymongo
 ################## GETING CONNECTION
-conn = pymongo.Connection()
-db = conn["MOBAFIRE"]
-######### making Spells field
-######### making Item field
-######### making Champion field	  ====>>>{all of Fields in under League of legend}
-######### making Abilities field
-######### making Runes field
-######### making League of Legends
-def Add_Spells(dic):
-	db.League_Of_Legend.Spells.insert(dic)
-def Add_Item(dic):
-	db.League_Of_Legend.Item.insert(dic)
-def Add_champions(dic):
-	db.League_Of_Legend.Champions.insert(dic)
-def Add_Abilities(dic):	
-	db.League_Of_Legend.Abilities.insert(dic)
-def Add_Runes(dic):
-	db.League_Of_Legend.Runes.insert(dic)
-	
+def get_connection():
+	"""Function for seting up a connection."""
+	conn = pymongo.Connection()
+	db = conn["League_Of_Legend"]
+	return db
+
+############################################
+def Add_Field(dic,db,Field):
+	try:
+		exec("db.League_Of_Legend."+Field+".insert(dic)")
+	except:
+		print dic
+		print type(dic)

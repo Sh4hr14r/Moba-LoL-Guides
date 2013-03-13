@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 import urllib2
 from bs4 import BeautifulSoup
 import re
 from Spell import Spell
 from Ability import Ability
+from Item import Item
+from Add_Database import *
 #champ_url='http://www.mobafire.com/league-of-legends/champions'
 #champ_resp=urllib2.urlopen(champ_url)
 #champions=champ_resp.read()
@@ -21,16 +24,14 @@ itsoup=BeautifulSoup(items)
 absoup=BeautifulSoup(abilities)
 spsoup=BeautifulSoup(spells)
 ##################################################Function Declarations#####################################################################
-def name_dic_creator(soup,tag,attrib,pattern):
+def name_dic_creator(soup):
 	"""Function for creating an empty dictionary containing the input soup's wanted names as keys."""	
 	dic={}
-	tags=[]
-	for link in soup.find_all(tag,{attrib:pattern}):
-		tags.append(link)
-	for linktags in tags:
-		dic[linktags.string]=None
+	tags=[(a,a.find('div',{'class':'champ-name'}),a.find('div',{'class':'champ-sub'})) for a in soup.find_all('a',{'class':'champ-box'})]
+	for i in range(len(tags)):
+		dic[tags[i][1].string]=[tags[i][0].get('href'),tags[i][2].text.strip()]
 	return dic
-	
+
 	
 def link_tag_dic(soup):
 	"""Function for creating an empty dictionary containing the input soup's wanted names as keys."""
@@ -54,7 +55,7 @@ def link_tag_dic(soup):
 	sorted_tags=sorted(tags,key=lambda x:tags[tags.index(x)][0].string)
 	#Creating the desired dictionary containing ability names and their links and descriptions.
 	for i in range(len(sorted_tags)):
-		dic[sorted_tags[i][0].string]=[sorted_tags[i][0].get('href'),sorted_tags[i][1].string]
+		dic[sorted_tags[i][0].text.strip()]=[sorted_tags[i][0].get('href'),sorted_tags[i][1].string]
 	return dic
 
 
@@ -65,6 +66,7 @@ def spells_class_dic(dic):
 		exec(a+".Description = dic[a][1]")
 		exec("dic[a].append("+a+")")
 	return dic
+
 
 def abilities_class_dic(dic):
 	"""Function for setting the values of abilities in a ability object attributes and putting them into that dictionary."""
@@ -84,21 +86,57 @@ def abilities_class_dic(dic):
 	return dic
 	
 	
-def sp_or_ab_final(dic):
-	"""Generating the final Spells or Abilities dictionary for using in the desired database."""
+def create_final(dic,ind):
+	"""Generating the final Object dictionary for using in the desired database."""
 	for a in dic.keys():
-		dic[a]=dic[a][2].__dict__
+		dic[a]=dic[a][ind].__dict__
 	return dic
 
 
-def item_object_creator(dic):
-	
+def item_class_creator(dic):
+	"""Function for setting the values of the Item objects attributes and putting them into that dictionary."""
+	for a in dic.keys():
+		item_resp=urllib2.urlopen(dic[a][0])
+		item=item_resp.read()
+		itemsoup=BeautifulSoup(item)
+		tags=[div.find_all('p') for div in itemsoup.find_all('div',{'class':'item-info float-left'})]
+		dic[a].append(tags[0][2].text.strip())
+		temp=a.strip()
+		temp=temp.replace(':','')
+		temp=temp.replace("'",'_')
+		temp=temp.replace("-",'_')
+		temp=temp.replace(' ','_')
+		temp=temp.replace("/","OR")
+		temp=temp.replace(",","_")
+		temp=temp.replace("!","")
+		temp=temp.replace(".","")
+		exec(temp+" = Item(a)")
+		exec(temp+".Description = dic[a][2]")
+		exec(temp+".Price = dic[a][1]")
+		exec("dic[a].append("+temp+")")
+	return dic
+
+
+def make_db(dic,db,field):
+	"""Function for creating the database"""
+	for i in dic.keys():
+		Add_Field(dic[i],db,field)
+
+
 #########################################################Creating The Names Dictionaries####################################################
-Items=name_dic_creator(itsoup,'div','class','champ-name')
-Champions=name_dic_creator(chsoup,'div','class','champ-name')
+Items=name_dic_creator(itsoup)
+#Champions=name_dic_creator(chsoup,'div','class','champ-name')
 Abilities=link_tag_dic(absoup)
 Spells=link_tag_dic(spsoup)
 #########################################################Completed Dictionaries#############################################################
-Spells=sp_or_ab_final(spells_class_dic(Spells))
-Abilities=sp_or_ab_final(abilities_class_dic(Abilities))
+Spells=create_final(spells_class_dic(Spells),2)
+Abilities=create_final(abilities_class_dic(Abilities),2)
+Items=create_final(item_class_creator(Items),3)
+##########################################################Making a connection###############################################################
+database=get_connection()
+##########################################################Creating the databases############################################################
+make_db(Abilities,database,'Abilities')
+make_db(Items,database,'Items')
+make_db(Spells,database,'Spells')
 #########################################################Driver#############################################################################
+

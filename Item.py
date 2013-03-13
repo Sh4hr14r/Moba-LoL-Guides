@@ -1,4 +1,4 @@
-class item:
+class Item:
 
 	def __init__(self,item_name):
 		""" The initiation method."""
