@@ -9,7 +9,13 @@ from Add_Database import *
 #champ_url='http://www.mobafire.com/league-of-legends/champions'
 #champ_resp=urllib2.urlopen(champ_url)
 #champions=champ_resp.read()
-##################################################Opening The Needed Files##################################################################
+item_resp=urllib2.urlopen("http://www.mobafire.com/league-of-legends/items")
+items=item_resp.read()
+ability_resp=urllib2.urlopen("http://www.mobafire.com/league-of-legends/abilities")
+abilities=ability_resp.read()
+spell_resp=urllib2.urlopen("http://www.mobafire.com/league-of-legends/summoner-spells")
+spells=spell_resp.read()
+"""##################################################Opening The Needed Files##################################################################
 champ_resp=open("/home/shahriar/Desktop/Mobafire/League of Legends Strategy Build Guide :: LoL Strategy Building Tool by MOBAFire.html",'r')
 champions=champ_resp.read()
 item_resp=open("/home/shahriar/Desktop/Mobafire/Items.html",'r')
@@ -17,9 +23,9 @@ items=item_resp.read()
 ability_resp=open("/home/shahriar/Desktop/Mobafire/Abilities.html",'r')
 abilities=ability_resp.read()
 spell_resp=open("/home/shahriar/Desktop/Mobafire/Spells.html",'r')
-spells=spell_resp.read()
+spells=spell_resp.read()"""
 ##################################################Making BS4 Objects########################################################################
-chsoup=BeautifulSoup(champions)
+#chsoup=BeautifulSoup(champions)
 itsoup=BeautifulSoup(items)
 absoup=BeautifulSoup(abilities)
 spsoup=BeautifulSoup(spells)
@@ -96,7 +102,7 @@ def create_final(dic,ind):
 def item_class_creator(dic):
 	"""Function for setting the values of the Item objects attributes and putting them into that dictionary."""
 	for a in dic.keys():
-		item_resp=urllib2.urlopen(dic[a][0])
+		item_resp=urllib2.urlopen("http://www.mobafire.com"+dic[a][0])
 		item=item_resp.read()
 		itemsoup=BeautifulSoup(item)
 		tags=[div.find_all('p') for div in itemsoup.find_all('div',{'class':'item-info float-left'})]
